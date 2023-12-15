@@ -24,12 +24,10 @@ app.get("/", (req, res) => {
   return res.send(createTokenCreateUser("e"));
 });
 
-io.on("connection", (socket) => {});
+io.on("connection", (socket) => {
+  console.log(socket);
+});
 
 httpServer.listen(3000, () => {
   logger.info("API is running on port 3000");
 });
-
-sflhsdkfjhsdkjfh;
-
-kdhfjdshgfjhsdgf;
