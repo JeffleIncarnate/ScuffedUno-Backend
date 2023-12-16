@@ -20,7 +20,7 @@ const io = new Server(httpServer, {
 // Middleware
 app.use(morgan("dev"));
 
-app.get("/", (req, res) => {
+app.all("/", (req, res) => {
   return res.send(createTokenCreateUser("e"));
 });
 
