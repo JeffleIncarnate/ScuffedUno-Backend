@@ -6,7 +6,6 @@ import morgan from "morgan";
 import { Server } from "socket.io";
 
 import { logger } from "./core/logger/logger";
-import { createTokenCreateUser } from "./core/jwt/jwt";
 
 // Server
 const app = express();
@@ -19,9 +18,23 @@ const io = new Server(httpServer, {
 
 // Middleware
 app.use(morgan("dev"));
+app.use(express.json());
 
+// Import Routes
+import { postUser } from "./routes/post/postUser";
+
+// Use Routes
+app.use("/scuffed/post/postUser", postUser);
+
+// Index Route
 app.all("/", (req, res) => {
-  return res.send(createTokenCreateUser("e"));
+  return res.sendStatus(200);
+});
+
+app.all("*", (req, res) => {
+  return res
+    .status(404)
+    .send({ errorCode: 404, detail: "This route does not exist" });
 });
 
 io.on("connection", (socket) => {
