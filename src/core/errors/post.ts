@@ -36,4 +36,24 @@ export class PostError extends Error {
       },
     };
   }
+
+  static usernameAlreadyExists() {
+    return {
+      success: false,
+      details: {
+        reason: "A user with this username already exists",
+        errorCode: 400,
+      },
+    };
+  }
+
+  static nodemailerL() {
+    return {
+      success: false,
+      details: {
+        reason: "Unable to send email, please try again later",
+        errorCode: 400,
+      },
+    };
+  }
 }
