@@ -24,7 +24,7 @@ const postUser = express.Router();
 postUser.post("/", async (req, res) => {
   const { username, email, password } = req.body;
 
-  if (!verifyArray({ username, email, password })) {
+  if (!verifyArray({ username, email, password }).succeded) {
     return res
       .status(PostError.didNotProideItems().details.errorCode)
       .send(PostError.didNotProideItems().details);
