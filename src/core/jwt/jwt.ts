@@ -6,7 +6,9 @@ import jwt from "jsonwebtoken";
  * @returns Token
  */
 function createTokenCreateUser(uuid: string): string {
-  return jwt.sign({ uuid }, process.env.ACCESS_TOKEN_SECRET as string);
+  return jwt.sign({ uuid }, process.env.ACCESS_TOKEN_SECRET as string, {
+    expiresIn: "15m",
+  });
 }
 
 export { createTokenCreateUser };
