@@ -47,12 +47,33 @@ export class PostError extends Error {
     };
   }
 
+  static userNotFound() {
+    return {
+      success: false,
+      details: {
+        reason:
+          "You were not found within the database. So you were unable to be verified",
+        errorCode: 400,
+      },
+    };
+  }
+
   static nodemailerL() {
     return {
       success: false,
       details: {
         reason: "Unable to send email, please try again later",
-        errorCode: 400,
+        errorCode: 500,
+      },
+    };
+  }
+
+  static jwtError(errorMsg: string) {
+    return {
+      success: false,
+      details: {
+        reason: errorMsg,
+        errorCode: 500,
       },
     };
   }

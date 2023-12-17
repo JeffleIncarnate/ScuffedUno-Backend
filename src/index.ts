@@ -22,9 +22,11 @@ app.use(express.json());
 
 // Import Routes
 import { postUser } from "./routes/post/postUser";
+import { verifyUser } from "./routes/post/verifyUser";
 
 // Use Routes
 app.use("/scuffed/post/postUser", postUser);
+app.use("/scuffed/post/verifyUser", verifyUser);
 
 // Index Route
 app.all("/", (req, res) => {
