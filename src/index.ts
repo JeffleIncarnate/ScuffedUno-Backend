@@ -21,10 +21,18 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 // Import Routes
+// auth
+import { login } from "./core/auth/login";
+
+// post
 import { postUser } from "./routes/post/postUser";
 import { verifyUser } from "./routes/post/verifyUser";
 
 // Use Routes
+// auth
+app.use("/scuffed/auth/login", login);
+
+// post
 app.use("/scuffed/post/postUser", postUser);
 app.use("/scuffed/post/verifyUser", verifyUser);
 
