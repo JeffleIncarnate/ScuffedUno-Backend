@@ -15,10 +15,14 @@ const verifyUser = express.Router();
 verifyUser.post("/", async (req, res) => {
   const { token } = req.body;
 
-  if (!verifyArray({ token }).succeded) {
+  const didPassCheck = verifyArray({ token });
+
+  if (!didPassCheck.succeded) {
     return res
-      .status(PostError.didNotProideItems().details.errorCode)
-      .send(PostError.didNotProideItems().details);
+      .status(
+        PostError.didNotProideItems(didPassCheck.itemsMissing).details.errorCode
+      )
+      .send(PostError.didNotProideItems(didPassCheck.itemsMissing).details);
   }
 
   const decoded = decodeTokenCreateUser(token);

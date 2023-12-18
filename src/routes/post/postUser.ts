@@ -18,16 +18,21 @@ import { hashPassword } from "../../core/argon2/argon2";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { sendEmail } from "../../core/nodemailer/nodemailer";
 import { createTokenCreateUser } from "../../core/jwt/jwt";
+import { createUserScopes } from "../../core/data/scopes";
 
 const postUser = express.Router();
 
 postUser.post("/", async (req, res) => {
   const { username, email, password } = req.body;
 
-  if (!verifyArray({ username, email, password }).succeded) {
+  const didPassCheck = verifyArray({ username, email, password });
+
+  if (!didPassCheck.succeded) {
     return res
-      .status(PostError.didNotProideItems().details.errorCode)
-      .send(PostError.didNotProideItems().details);
+      .status(
+        PostError.didNotProideItems(didPassCheck.itemsMissing).details.errorCode
+      )
+      .send(PostError.didNotProideItems(didPassCheck.itemsMissing).details);
   }
 
   if (!verifyUsername(username)) {
@@ -56,7 +61,7 @@ postUser.post("/", async (req, res) => {
     username,
     email,
     password: await hashPassword(password),
-    token: createTokenCreateUser(id),
+    token: createTokenCreateUser(id, createUserScopes),
   };
 
   // If this fails, then we know the username is not unique
