@@ -3,6 +3,7 @@ import jwt, {
   JwtPayload,
   TokenExpiredError,
 } from "jsonwebtoken";
+import { IScopes } from "../data/scopes";
 
 interface ReturnDecodeTokenCreateUser {
   succeeded: boolean;
@@ -15,8 +16,8 @@ interface ReturnDecodeTokenCreateUser {
  * @param uuid
  * @returns Token
  */
-function createTokenCreateUser(uuid: string): string {
-  return jwt.sign({ uuid }, process.env.ACCESS_TOKEN_SECRET as string, {
+function createTokenCreateUser(uuid: string, scopes: IScopes): string {
+  return jwt.sign({ uuid, scopes }, process.env.ACCESS_TOKEN_SECRET as string, {
     expiresIn: "15m",
   });
 }
@@ -61,4 +62,16 @@ function decodeTokenCreateUser(token: string): ReturnDecodeTokenCreateUser {
   }
 }
 
-export { createTokenCreateUser, decodeTokenCreateUser };
+/**
+ * This is a token to provide an access token to a user, that expires after 1hr
+ * @param uuid
+ * @param scopes
+ * @returns Token
+ */
+function createToken(uuid: string, scopes: IScopes): string {
+  return jwt.sign({ uuid, scopes }, process.env.ACCESS_TOKEN_SECRET as string, {
+    expiresIn: "1hr",
+  });
+}
+
+export { createToken, createTokenCreateUser, decodeTokenCreateUser };
