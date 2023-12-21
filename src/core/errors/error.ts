@@ -1,5 +1,5 @@
 export class Error {
-  static didNotProideItems(missing: string[]) {
+  static didNotProvideItems(missing: string[]) {
     return {
       success: false,
       details: {

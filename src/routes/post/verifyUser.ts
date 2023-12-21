@@ -17,13 +17,13 @@ verifyUser.post("/", async (req, res) => {
 
    const didPassCheck = verifyArray({ token });
 
-   if (!didPassCheck.succeded) {
+   if (!didPassCheck.succeeded) {
       return res
          .status(
-            PostError.didNotProideItems(didPassCheck.itemsMissing).details
+            PostError.didNotProvideItems(didPassCheck.itemsMissing).details
                .errorCode,
          )
-         .send(PostError.didNotProideItems(didPassCheck.itemsMissing).details);
+         .send(PostError.didNotProvideItems(didPassCheck.itemsMissing).details);
    }
 
    const decoded = decodeTokenCreateUser(token);

@@ -27,13 +27,13 @@ postUser.post("/", async (req, res) => {
 
    const didPassCheck = verifyArray({ username, email, password });
 
-   if (!didPassCheck.succeded) {
+   if (!didPassCheck.succeeded) {
       return res
          .status(
-            PostError.didNotProideItems(didPassCheck.itemsMissing).details
+            PostError.didNotProvideItems(didPassCheck.itemsMissing).details
                .errorCode,
          )
-         .send(PostError.didNotProideItems(didPassCheck.itemsMissing).details);
+         .send(PostError.didNotProvideItems(didPassCheck.itemsMissing).details);
    }
 
    if (!verifyUsername(username)) {
@@ -56,7 +56,7 @@ postUser.post("/", async (req, res) => {
 
    const id = crypto.randomUUID();
 
-   // Cretaed At, banned, verified is defaulted.
+   // Created At, banned, verified is defaulted.
    const user = {
       id: id,
       username,

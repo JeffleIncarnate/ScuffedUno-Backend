@@ -1,5 +1,5 @@
 interface Return {
-  succeded: boolean;
+  succeeded: boolean;
   itemsMissing: string[];
 }
 
@@ -10,17 +10,17 @@ interface Return {
  */
 function verifyArray(items: { [key: string]: string | undefined }): Return {
   const itemsMissing = [];
-  let succeded = true;
+  let succeeded = true;
 
   for (const [key, value] of Object.entries(items)) {
     if (value === undefined || value === "") {
-      succeded = false;
+      succeeded = false;
       itemsMissing.push(key);
     }
   }
 
   return {
-    succeded,
+    succeeded: succeeded,
     itemsMissing,
   };
 }
