@@ -6,16 +6,16 @@ import * as argon2 from "argon2";
  * @returns string
  */
 async function hashPassword(password: string): Promise<string> {
-  return await argon2.hash(password, {
-    type: argon2.argon2id,
-  });
+   return await argon2.hash(password, {
+      type: argon2.argon2id,
+   });
 }
 
 async function verifyPasswordHash(
-  hashPassword: string,
-  password: string
+   hashPassword: string,
+   password: string,
 ): Promise<boolean> {
-  return await argon2.verify(hashPassword, password);
+   return await argon2.verify(hashPassword, password);
 }
 
 export { hashPassword, verifyPasswordHash };

@@ -1,14 +1,14 @@
 import jwt, {
-  JsonWebTokenError,
-  JwtPayload,
-  TokenExpiredError,
+   JsonWebTokenError,
+   JwtPayload,
+   TokenExpiredError,
 } from "jsonwebtoken";
 import { IScopes } from "../data/scopes";
 
 interface ReturnDecodeTokenCreateUser {
-  succeeded: boolean;
-  uuid: string;
-  error: string;
+   succeeded: boolean;
+   uuid: string;
+   error: string;
 }
 
 /**
@@ -17,9 +17,13 @@ interface ReturnDecodeTokenCreateUser {
  * @returns Token
  */
 function createTokenCreateUser(uuid: string, scopes: IScopes): string {
-  return jwt.sign({ uuid, scopes }, process.env.ACCESS_TOKEN_SECRET as string, {
-    expiresIn: "15m",
-  });
+   return jwt.sign(
+      { uuid, scopes },
+      process.env.ACCESS_TOKEN_SECRET as string,
+      {
+         expiresIn: "15m",
+      },
+   );
 }
 
 /**
@@ -28,38 +32,38 @@ function createTokenCreateUser(uuid: string, scopes: IScopes): string {
  * @returns Object
  */
 function decodeTokenCreateUser(token: string): ReturnDecodeTokenCreateUser {
-  try {
-    const { uuid } = jwt.verify(
-      token,
-      process.env.ACCESS_TOKEN_SECRET as string
-    ) as JwtPayload;
+   try {
+      const { uuid } = jwt.verify(
+         token,
+         process.env.ACCESS_TOKEN_SECRET as string,
+      ) as JwtPayload;
 
-    return {
-      succeeded: true,
-      uuid: uuid,
-      error: "",
-    };
-  } catch (err) {
-    if (err instanceof JsonWebTokenError) {
       return {
-        succeeded: false,
-        error: err.message,
-        uuid: "",
+         succeeded: true,
+         uuid: uuid,
+         error: "",
       };
-    } else if (err instanceof TokenExpiredError) {
-      return {
-        succeeded: false,
-        error: err.message,
-        uuid: "",
-      };
-    } else {
-      return {
-        succeeded: false,
-        error: "Unknown JWT error",
-        uuid: "",
-      };
-    }
-  }
+   } catch (err) {
+      if (err instanceof JsonWebTokenError) {
+         return {
+            succeeded: false,
+            error: err.message,
+            uuid: "",
+         };
+      } else if (err instanceof TokenExpiredError) {
+         return {
+            succeeded: false,
+            error: err.message,
+            uuid: "",
+         };
+      } else {
+         return {
+            succeeded: false,
+            error: "Unknown JWT error",
+            uuid: "",
+         };
+      }
+   }
 }
 
 /**
@@ -69,9 +73,13 @@ function decodeTokenCreateUser(token: string): ReturnDecodeTokenCreateUser {
  * @returns Token
  */
 function createToken(uuid: string, scopes: IScopes): string {
-  return jwt.sign({ uuid, scopes }, process.env.ACCESS_TOKEN_SECRET as string, {
-    expiresIn: "1hr",
-  });
+   return jwt.sign(
+      { uuid, scopes },
+      process.env.ACCESS_TOKEN_SECRET as string,
+      {
+         expiresIn: "1hr",
+      },
+   );
 }
 
 export { createToken, createTokenCreateUser, decodeTokenCreateUser };

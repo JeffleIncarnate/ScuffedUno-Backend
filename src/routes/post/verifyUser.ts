@@ -13,44 +13,45 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 const verifyUser = express.Router();
 
 verifyUser.post("/", async (req, res) => {
-  const { token } = req.body;
+   const { token } = req.body;
 
-  const didPassCheck = verifyArray({ token });
+   const didPassCheck = verifyArray({ token });
 
-  if (!didPassCheck.succeded) {
-    return res
-      .status(
-        PostError.didNotProideItems(didPassCheck.itemsMissing).details.errorCode
-      )
-      .send(PostError.didNotProideItems(didPassCheck.itemsMissing).details);
-  }
-
-  const decoded = decodeTokenCreateUser(token);
-
-  if (!decoded.succeeded) {
-    return res
-      .status(PostError.jwtError(decoded.error).details.errorCode)
-      .send(PostError.jwtError(decoded.error).details);
-  }
-
-  try {
-    await pool.user.update({
-      where: {
-        id: decoded.uuid,
-      },
-      data: {
-        verified: true,
-      },
-    });
-  } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError) {
+   if (!didPassCheck.succeded) {
       return res
-        .status(PostError.userNotFound().details.errorCode)
-        .send(PostError.userNotFound().details);
-    }
-  }
+         .status(
+            PostError.didNotProideItems(didPassCheck.itemsMissing).details
+               .errorCode,
+         )
+         .send(PostError.didNotProideItems(didPassCheck.itemsMissing).details);
+   }
 
-  return res.status(201).send("You have been successfully verified");
+   const decoded = decodeTokenCreateUser(token);
+
+   if (!decoded.succeeded) {
+      return res
+         .status(PostError.jwtError(decoded.error).details.errorCode)
+         .send(PostError.jwtError(decoded.error).details);
+   }
+
+   try {
+      await pool.user.update({
+         where: {
+            id: decoded.uuid,
+         },
+         data: {
+            verified: true,
+         },
+      });
+   } catch (err) {
+      if (err instanceof PrismaClientKnownRequestError) {
+         return res
+            .status(PostError.userNotFound().details.errorCode)
+            .send(PostError.userNotFound().details);
+      }
+   }
+
+   return res.status(201).send("You have been successfully verified");
 });
 
 export { verifyUser };

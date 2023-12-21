@@ -4,13 +4,13 @@
  * @returns boolean
  */
 function verifyUsername(username: string): boolean {
-  const regex = new RegExp(/\s+|[!-/:-@[-`{-~]/g);
+   const regex = new RegExp(/\s+|[!-/:-@[-`{-~]/g);
 
-  if ([...username.matchAll(regex)].length !== 0) {
-    return false;
-  }
+   if ([...username.matchAll(regex)].length !== 0) {
+      return false;
+   }
 
-  return true;
+   return true;
 }
 
 /**
@@ -19,13 +19,13 @@ function verifyUsername(username: string): boolean {
  * @returns boolean
  */
 function verifyEmail(email: string): boolean {
-  const regex = new RegExp(/^[\w-.]+@([\w-]+\.)+[\w-]{2,7}$/g);
+   const regex = new RegExp(/^[\w-.]+@([\w-]+\.)+[\w-]{2,7}$/g);
 
-  if ([...email.matchAll(regex)].length === 0) {
-    return false;
-  }
+   if ([...email.matchAll(regex)].length === 0) {
+      return false;
+   }
 
-  return true;
+   return true;
 }
 
 /**
@@ -34,7 +34,7 @@ function verifyEmail(email: string): boolean {
  * @returns boolean
  */
 function verifyPassword(password: string): boolean {
-  /* 
+   /* 
     At least 1 capital letter
     At least 1 lower case letter
     At least 1 digit
@@ -42,15 +42,15 @@ function verifyPassword(password: string): boolean {
     Minimum length of 8 characters
     No spaces
   */
-  const regex = new RegExp(
-    /^(?!.*\s+)(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/g
-  );
+   const regex = new RegExp(
+      /^(?!.*\s+)(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/g,
+   );
 
-  if ([...password.matchAll(regex)].length === 0) {
-    return false;
-  }
+   if ([...password.matchAll(regex)].length === 0) {
+      return false;
+   }
 
-  return true;
+   return true;
 }
 
 export { verifyUsername, verifyEmail, verifyPassword };
