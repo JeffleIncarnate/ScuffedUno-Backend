@@ -67,4 +67,15 @@ export class AuthError extends Error {
          },
       };
    }
+
+   static refreshTokenNotFound() {
+      return {
+         success: false,
+         details: {
+            reason:
+               "The refresh token provided was not found or has already been used (remember refresh tokens are single use)",
+            errorCode: 401,
+         },
+      };
+   }
 }
