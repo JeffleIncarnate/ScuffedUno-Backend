@@ -7,9 +7,7 @@ import { AuthError } from "../errors/auth";
 import { generalScopes } from "../data/scopes";
 import { LoginRequest } from "../types/validators";
 import { verifyPasswordHash } from "../argon2/argon2";
-
-const ACCESS_TOKEN_EXPIRY = "15m";
-const REFRESH_TOKEN_EXPIRY = "7d";
+import { ACCESS_TOKEN_EXPIRY, REFRESH_TOKEN_EXPIRY } from ".";
 
 const login = express.Router();
 
