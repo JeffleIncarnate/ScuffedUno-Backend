@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 import express from "express";
 import { validateRequest } from "zod-express-middleware";
 
@@ -55,7 +57,16 @@ login.post("/", validateRequest({ body: LoginRequest }), async (req, res) => {
       ACCESS_TOKEN_EXPIRY,
    );
 
-   const refreshToken = createToken({ uuid: user.id }, REFRESH_TOKEN_EXPIRY);
+   const refreshTokenId = crypto.randomUUID();
+   const refreshToken = createToken(
+      { uuid: user.id, refreshId: refreshTokenId },
+      REFRESH_TOKEN_EXPIRY,
+   );
+   await pool.refereshToken.create({
+      data: {
+         id: refreshTokenId,
+      },
+   });
 
    return res.send({
       success: true,
