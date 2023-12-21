@@ -1,32 +1,24 @@
 import express from "express";
+import { validateRequest } from "zod-express-middleware";
 
-import { verifyArray } from "../verifyArray/verifyArray";
-import { AuthError } from "../errors/auth";
-import { pool } from "../database/prisma";
-import { verifyPasswordHash } from "../argon2/argon2";
 import { createToken } from "../jwt/jwt";
+import { pool } from "../database/prisma";
+import { AuthError } from "../errors/auth";
 import { generalScopes } from "../data/scopes";
+import { LoginRequest } from "../types/validators";
+import { verifyPasswordHash } from "../argon2/argon2";
+
+const ACCESS_TOKEN_EXPIRY = "15m";
+const REFRESH_TOKEN_EXPIRY = "7d";
 
 const login = express.Router();
 
-login.post("/", async (req, res) => {
+login.post("/", validateRequest({ body: LoginRequest }), async (req, res) => {
    const { username, password } = req.body;
 
-   const didPassCheck = verifyArray({ username, password });
-
-   if (!didPassCheck.succeded) {
-      return res
-         .status(
-            AuthError.didNotProideItems(didPassCheck.itemsMissing).details
-               .errorCode,
-         )
-         .send(AuthError.didNotProideItems(didPassCheck.itemsMissing).details);
-   }
-
-   let prismaRes;
-
+   let user;
    try {
-      prismaRes = await pool.user.findUnique({
+      user = await pool.user.findUnique({
          where: {
             username: username,
          },
@@ -42,28 +34,35 @@ login.post("/", async (req, res) => {
          .send(AuthError.prismaError().details);
    }
 
-   if (prismaRes === null) {
+   if (user === null) {
       return res
          .status(AuthError.youDoNotExist().details.errorCode)
          .send(AuthError.youDoNotExist().details);
    }
 
-   if (!prismaRes.verified) {
+   if (!user.verified) {
       return res
          .status(AuthError.notVerified().details.errorCode)
          .send(AuthError.notVerified().details);
    }
 
-   if (!(await verifyPasswordHash(prismaRes.password, password))) {
+   if (!(await verifyPasswordHash(user.password, password))) {
       return res
          .status(AuthError.incorrectPassword().details.errorCode)
          .send(AuthError.incorrectPassword().details);
    }
 
-   const accessToken = createToken(prismaRes.id, generalScopes);
+   const accessToken = createToken(
+      { uuid: user.id, scopes: generalScopes },
+      ACCESS_TOKEN_EXPIRY,
+   );
+
+   const refreshToken = createToken({ uuid: user.id }, REFRESH_TOKEN_EXPIRY);
 
    return res.send({
+      success: true,
       accessToken,
+      refreshToken,
    });
 });
 
