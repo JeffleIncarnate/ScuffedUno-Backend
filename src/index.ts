@@ -8,10 +8,13 @@ import { Server } from "socket.io";
 import { logger } from "./core/logger/logger";
 
 // Import Routes
+// auth
 import { login } from "./core/auth/authenticate";
-import { postUser } from "./routes/post/postUser";
-import { verifyUser } from "./routes/post/verifyUser";
 import { refreshTokenRoute } from "./core/auth/refresh";
+
+// post
+import { verifyUser } from "./routes/user/create/verifyUser";
+import { postUser } from "./routes/user/create/postUser";
 
 // Server
 const app = express();
@@ -28,12 +31,14 @@ app.use(express.json());
 
 // Use Routes
 // auth
-app.use("/scuffed/auth/login", login);
-app.use("/scuffed/auth/refresh", refreshTokenRoute);
+app.use("/v1/api/auth/login", login);
+app.use("/v1/api/auth/refresh", refreshTokenRoute);
+
+// get
 
 // post
-app.use("/scuffed/post/postUser", postUser);
-app.use("/scuffed/post/verifyUser", verifyUser);
+app.use("/v1/api/user", postUser);
+app.use("/v1/api/user/verify", verifyUser);
 
 // Index Route
 app.all("/", (req, res) => {
