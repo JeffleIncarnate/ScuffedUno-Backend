@@ -11,6 +11,15 @@ interface ReturnDecodeTokenCreateUser {
    error: string;
 }
 
+export function createToken(
+   data: string | Buffer | object,
+   expiresIn: string,
+): string {
+   return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET as string, {
+      expiresIn,
+   });
+}
+
 /**
  * This is a function to create a token for a user who needs to be verified
  * @param uuid
@@ -72,7 +81,7 @@ function decodeTokenCreateUser(token: string): ReturnDecodeTokenCreateUser {
  * @param scopes
  * @returns Token
  */
-function createToken(uuid: string, scopes: IScopes): string {
+function createAccessToken(uuid: string, scopes: IScopes): string {
    return jwt.sign(
       { uuid, scopes },
       process.env.ACCESS_TOKEN_SECRET as string,
@@ -82,4 +91,4 @@ function createToken(uuid: string, scopes: IScopes): string {
    );
 }
 
-export { createToken, createTokenCreateUser, decodeTokenCreateUser };
+export { createAccessToken, createTokenCreateUser, decodeTokenCreateUser };
