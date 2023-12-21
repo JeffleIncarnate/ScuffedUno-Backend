@@ -11,11 +11,15 @@ datasource db {
 }
 
 model User {
-  id           String    @id @unique
-  username     String    @unique
-  email        String    
-  password     String 
-  createdAt    DateTime  @default(now())
-  banned       Boolean   @default(false)
-  verified     Boolean   @default(false)
+  id        String   @id @unique
+  username  String   @unique
+  email     String
+  password  String
+  createdAt DateTime @default(now())
+  banned    Boolean  @default(false)
+  verified  Boolean  @default(false)
+}
+
+model RefereshToken {
+  id String @unique
 }
