@@ -6,19 +6,19 @@
 import express from "express";
 import crypto from "crypto";
 
-import { pool } from "../../core/database/prisma";
-import { verifyArray } from "../../core/verifyArray/verifyArray";
-import { PostError } from "../../core/errors/post";
+import { pool } from "../../../core/database/prisma";
+import { verifyArray } from "../../../core/verifyArray/verifyArray";
+import { PostError } from "../../../core/errors/post";
 import {
    verifyUsername,
    verifyEmail,
    verifyPassword,
-} from "../../core/verifyArray/verify";
-import { hashPassword } from "../../core/argon2/argon2";
+} from "../../../core/verifyArray/verify";
+import { hashPassword } from "../../../core/argon2/argon2";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { sendEmail } from "../../core/nodemailer/nodemailer";
-import { createTokenCreateUser } from "../../core/jwt/jwt";
-import { createUserScopes } from "../../core/data/scopes";
+import { sendEmail } from "../../../core/nodemailer/nodemailer";
+import { createTokenCreateUser } from "../../../core/jwt/jwt";
+import { createUserScopes } from "../../../core/data/scopes";
 
 const postUser = express.Router();
 

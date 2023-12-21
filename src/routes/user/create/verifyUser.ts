@@ -4,10 +4,10 @@
 
 import express from "express";
 
-import { verifyArray } from "../../core/verifyArray/verifyArray";
-import { PostError } from "../../core/errors/post";
-import { decodeTokenCreateUser } from "../../core/jwt/jwt";
-import { pool } from "../../core/database/prisma";
+import { verifyArray } from "../../../core/verifyArray/verifyArray";
+import { PostError } from "../../../core/errors/post";
+import { decodeTokenCreateUser } from "../../../core/jwt/jwt";
+import { pool } from "../../../core/database/prisma";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const verifyUser = express.Router();
