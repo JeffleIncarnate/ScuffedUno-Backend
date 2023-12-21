@@ -101,7 +101,7 @@ postUser.post("/", async (req, res) => {
 
    return res.status(201).send({
       success: true,
-      detail: "User successfuly created",
+      detail: "User successfully created",
    });
 });
 
