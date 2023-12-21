@@ -12,8 +12,10 @@ declare global {
 
   namespace Express {
     export interface Request {
-      uuid: string;
-      scopes: IScopes;
+      user?: {
+        uuid: string;
+        scopes: IScopes;
+      };
     }
   }
 }

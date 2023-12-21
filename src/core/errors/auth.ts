@@ -36,4 +36,24 @@ export class AuthError extends Error {
       },
     };
   }
+
+  static verifyTokenFail() {
+    return {
+      success: false,
+      details: {
+        reason: "The token you are using is expired or is invalid",
+        errorCode: 400,
+      },
+    };
+  }
+
+  static generalTokenFail() {
+    return {
+      success: false,
+      details: {
+        reason: "There was an error with the token verification",
+        errorCode: 400,
+      },
+    };
+  }
 }
