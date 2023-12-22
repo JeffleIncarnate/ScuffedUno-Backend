@@ -1,81 +1,61 @@
-import { Error } from "./error";
+import { HTTPError } from "./base_error";
 
-export class AuthError extends Error {
+export class YouDoNotExist extends HTTPError {
    constructor() {
-      super();
+      super(404, {
+         reason:
+            "You do not exist in the database, so you are unable to get a token",
+      });
    }
+}
 
-   static youDoNotExist() {
-      return {
-         success: false,
-         details: {
-            reason:
-               "You do not exist in the database, so you are unable to get a token",
-            errorCode: 401,
-         },
-      };
+export class IncorrectPassword extends HTTPError {
+   constructor() {
+      super(401, {
+         reason: "The password you provided is not correct",
+      });
    }
+}
 
-   static incorrectPassword() {
-      return {
-         success: false,
-         details: {
-            reason: "The password you provided is not correct",
-            errorCode: 401,
-         },
-      };
+export class NotVerified extends HTTPError {
+   constructor() {
+      super(401, {
+         reason:
+            "You are not verified, so you are unable to get an access token. Read the instruction in your email to lean how to verify",
+      });
    }
+}
 
-   static notVerified() {
-      return {
-         success: false,
-         details: {
-            reason:
-               "You are not verified, so you are unable to get an access token. Read the instruction in your email to lean how to verify",
-            errorCode: 401,
-         },
-      };
+export class InvalidTokenProvided extends HTTPError {
+   constructor(error: string) {
+      super(401, {
+         reason: "The token you provided is not valid",
+         error,
+      });
    }
+}
 
-   static invalidTokenProvided(reason: string) {
-      return {
-         success: false,
-         details: {
-            reason: "The token you provided is not valid",
-            error: reason,
-            errorCode: 401,
-         },
-      };
+export class TokenNotProvided extends HTTPError {
+   constructor() {
+      super(401, {
+         reason: "You straight up forgor to provide a token",
+      });
    }
+}
 
-   static tokenNotProvided() {
-      return {
-         success: false,
-         details: {
-            reason: "You straight up forgor to provide a token",
-            errorCode: 400,
-         },
-      };
+export class GeneralTokenFail extends HTTPError {
+   constructor() {
+      super(500, {
+         reason: "There was an error with the token verification",
+      });
    }
+}
 
-   static generalTokenFail() {
-      return {
-         success: false,
-         details: {
-            reason: "There was an error with the token verification",
-            errorCode: 500,
-         },
-      };
-   }
-
-   static refreshTokenNotFound() {
-      return {
-         success: false,
-         details: {
-            reason:
-               "The refresh token provided was not found or has already been used (remember refresh tokens are single use)",
-            errorCode: 401,
-         },
-      };
+export class RefreshTokenNotFound extends HTTPError {
+   constructor() {
+      super(401, {
+         reason:
+            "The refresh token provided was not found or has already been used (remember refresh tokens are single use)",
+      });
    }
 }
