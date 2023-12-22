@@ -2,14 +2,7 @@ import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
 import HTTPErrors from "../errors";
-import { IScopes } from "../data/scopes";
-
-interface IToken {
-   uuid: string;
-   scopes: IScopes;
-   iat: number;
-   exp: number;
-}
+import { AccessTokenValidator, AccessToken } from "../types/validators";
 
 export function authorizeRequest(
    req: Request,
@@ -24,9 +17,9 @@ export function authorizeRequest(
       return;
    }
 
-   let user;
+   let token_data;
    try {
-      user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      token_data = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
    } catch (err) {
       if (!(err instanceof JsonWebTokenError)) {
          next(new HTTPErrors.GeneralTokenFail());
@@ -37,6 +30,16 @@ export function authorizeRequest(
       return;
    }
 
-   req.user = user as IToken;
+   if (!AccessTokenValidator.safeParse(token_data).success) {
+      next(
+         new HTTPErrors.InvalidTokenProvided(
+            "The token you provided is not an access token, probably a refresh token",
+         ),
+      );
+      return;
+   }
+
+   // i think this should be renamed to req.token
+   req.user = token_data as AccessToken;
    next();
 }
