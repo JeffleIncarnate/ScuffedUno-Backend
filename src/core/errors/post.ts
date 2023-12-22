@@ -1,80 +1,60 @@
-import { Error } from "./error";
+import { HTTPError } from "./base_error";
 
-export class PostError extends Error {
-  constructor() {
-    super();
-  }
+export class InvalidUsername extends HTTPError {
+   constructor() {
+      super(400, {
+         reason:
+            "The username provided is not valid. Username can not contain spaces or special characters",
+      });
+   }
+}
 
-  static invalidUsername() {
-    return {
-      success: false,
-      details: {
-        reason:
-          "The username provided is not valid. Username can not contain spaces or special characters",
-        errorCode: 400,
-      },
-    };
-  }
+export class InvalidEmail extends HTTPError {
+   constructor() {
+      super(400, {
+         reason: "The email provided is not valid",
+      });
+   }
+}
 
-  static invalidEmail() {
-    return {
-      success: false,
-      details: {
-        reason: "The email provided is not valid",
-        errorCode: 400,
-      },
-    };
-  }
+export class InvalidPassword extends HTTPError {
+   constructor() {
+      super(400, {
+         reason:
+            "The Password provided is not valid. It must contain at least one of the following letters: Uppercase, lowercase, special character, number. And at least eight characters",
+      });
+   }
+}
 
-  static invalidPassword() {
-    return {
-      success: false,
-      details: {
-        reason:
-          "The Password provided is not valid. It must contain at least one of the following letters: Uppercase, lowercase, special character, number. And at least eight characters",
-        errorCode: 400,
-      },
-    };
-  }
+export class UsernameConflict extends HTTPError {
+   constructor() {
+      super(409, {
+         reason: "A user with this username already exists",
+      });
+   }
+}
 
-  static usernameAlreadyExists() {
-    return {
-      success: false,
-      details: {
-        reason: "A user with this username already exists",
-        errorCode: 400,
-      },
-    };
-  }
+export class UserNotFound extends HTTPError {
+   constructor() {
+      super(404, {
+         reason:
+            "You were not found within the database. So you were unable to be verified",
+      });
+   }
+}
 
-  static userNotFound() {
-    return {
-      success: false,
-      details: {
-        reason:
-          "You were not found within the database. So you were unable to be verified",
-        errorCode: 400,
-      },
-    };
-  }
+export class NodeEmailerL extends HTTPError {
+   constructor() {
+      super(500, {
+         reason: "Unable to send email, please try again later",
+      });
+   }
+}
 
-  static nodemailerL() {
-    return {
-      success: false,
-      details: {
-        reason: "Unable to send email, please try again later",
-        errorCode: 500,
-      },
-    };
-  }
-
-  static jwtError(errorMsg: string) {
-    return {
-      success: false,
-      details: {
-        reason: errorMsg,
-        errorCode: 500,
-      },
-    };
-  }
+export class JWTError extends HTTPError {
+   constructor(reason: string) {
+      super(500, {
+         reason,
+      });
+   }
 }
