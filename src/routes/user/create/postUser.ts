@@ -6,52 +6,45 @@
 import express from "express";
 import crypto from "crypto";
 
+import HTTPErrors from "../../../core/errors";
 import { pool } from "../../../core/database/prisma";
 import { verifyArray } from "../../../core/verifyArray/verifyArray";
-import { PostError } from "../../../core/errors/post";
 import {
    verifyUsername,
    verifyEmail,
    verifyPassword,
 } from "../../../core/verifyArray/verify";
 import { hashPassword } from "../../../core/argon2/argon2";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { sendEmail } from "../../../core/nodemailer/nodemailer";
 import { createTokenCreateUser } from "../../../core/jwt/jwt";
 import { createUserScopes } from "../../../core/data/scopes";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const postUser = express.Router();
 
-postUser.post("/", async (req, res) => {
+postUser.post("/", async (req, res, next) => {
    const { username, email, password } = req.body;
 
    const didPassCheck = verifyArray({ username, email, password });
 
    if (!didPassCheck.succeeded) {
-      return res
-         .status(
-            PostError.didNotProvideItems(didPassCheck.itemsMissing).details
-               .errorCode,
-         )
-         .send(PostError.didNotProvideItems(didPassCheck.itemsMissing).details);
+      next(new HTTPErrors.DidNotProvideItems(didPassCheck.itemsMissing));
+      return;
    }
 
    if (!verifyUsername(username)) {
-      return res
-         .status(PostError.invalidUsername().details.errorCode)
-         .send(PostError.invalidUsername());
+      next(new HTTPErrors.InvalidUsername());
+      return;
    }
 
    if (!verifyEmail(email)) {
-      return res
-         .status(PostError.invalidEmail().details.errorCode)
-         .send(PostError.invalidEmail());
+      next(new HTTPErrors.InvalidEmail());
+      return;
    }
 
    if (!verifyPassword(password)) {
-      return res
-         .status(PostError.invalidPassword().details.errorCode)
-         .send(PostError.invalidPassword());
+      next(new HTTPErrors.InvalidPassword());
+      return;
    }
 
    const id = crypto.randomUUID();
@@ -76,12 +69,12 @@ postUser.post("/", async (req, res) => {
          },
       });
    } catch (err) {
-      if (err instanceof PrismaClientKnownRequestError) {
-         if (err.code === "P2002") {
-            return res
-               .status(PostError.usernameAlreadyExists().details.errorCode)
-               .send(PostError.usernameAlreadyExists().details);
-         }
+      if (
+         err instanceof PrismaClientKnownRequestError &&
+         err.code === "P2002"
+      ) {
+         next(new HTTPErrors.UsernameConflict());
+         return;
       }
    }
 
@@ -94,9 +87,8 @@ postUser.post("/", async (req, res) => {
          },
       });
 
-      return res
-         .status(PostError.nodemailerL().details.errorCode)
-         .send(PostError.nodemailerL().details);
+      next(new HTTPErrors.NodeEmailerL());
+      return;
    }
 
    return res.status(201).send({

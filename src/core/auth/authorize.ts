@@ -1,8 +1,8 @@
 import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
+import HTTPErrors from "../errors";
 import { IScopes } from "../data/scopes";
-import { AuthError } from "../errors/auth";
 
 interface IToken {
    uuid: string;
@@ -20,8 +20,8 @@ export function authorizeRequest(
    const token = auth_header && auth_header.split(" ")[1]; // Splitting because it goes: "Bearer [space] TOKEN"
 
    if (token === undefined) {
-      const error = AuthError.tokenNotProvided();
-      return res.status(error.details.errorCode).send(error);
+      next(new HTTPErrors.TokenNotProvided());
+      return;
    }
 
    let user;
@@ -29,12 +29,12 @@ export function authorizeRequest(
       user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
    } catch (err) {
       if (!(err instanceof JsonWebTokenError)) {
-         const error = AuthError.generalTokenFail();
-         return res.status(error.details.errorCode).send(error);
+         next(new HTTPErrors.GeneralTokenFail());
+         return;
       }
 
-      const error = AuthError.invalidTokenProvided(err.message);
-      return res.status(error.details.errorCode).send(error);
+      next(new HTTPErrors.InvalidTokenProvided(err.message));
+      return;
    }
 
    req.user = user as IToken;
