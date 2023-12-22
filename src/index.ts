@@ -6,6 +6,7 @@ import morgan from "morgan";
 import { Server } from "socket.io";
 
 import { logger } from "./core/logger/logger";
+import { errorHandler } from "./core/errors/handler";
 
 // Import Routes
 // auth
@@ -58,3 +59,5 @@ io.on("connection", (socket) => {
 httpServer.listen(3000, () => {
    logger.info("API is running on port 3000");
 });
+
+app.use(errorHandler);
