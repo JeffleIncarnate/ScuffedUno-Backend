@@ -3,6 +3,7 @@ import http from "http";
 
 import express from "express";
 import morgan from "morgan";
+import cors from "cors";
 import { Server } from "socket.io";
 
 import { logger } from "./core/logger/logger";
@@ -19,6 +20,11 @@ import { postUser } from "./routes/user/create/postUser";
 
 // Server
 const app = express();
+app.use(
+   cors({
+      origin: "http://localhost:5173",
+   }),
+);
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
    cors: {
