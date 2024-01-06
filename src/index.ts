@@ -32,9 +32,10 @@ const io = new Server(httpServer, {
    },
 });
 
-// Middleware
+// Express use declarations
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(errorHandler);
 
 // Use Routes
 // auth
@@ -63,11 +64,11 @@ app.all("*", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-   console.log(socket);
+   socket.on("omg", (roomId) => {
+      console.log(roomId);
+   });
 });
 
 httpServer.listen(3000, () => {
    logger.info("API is running on port 3000");
 });
-
-app.use(errorHandler);
