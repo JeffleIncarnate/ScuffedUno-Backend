@@ -8,7 +8,8 @@
       "test": "npx jest",
       "dev": "npx nodemon",
       "build": "rm -rf ./build && tsc",
-      "start": "npm run build && node build/index.js"
+      "start": "npm run build && node build/index.js",
+      "preinstall": "npx only-allow pnpm"
    },
    "keywords": [],
    "author": "",
@@ -30,6 +31,7 @@
    },
    "dependencies": {
       "@prisma/client": "^5.7.0",
+      "@types/cors": "^2.8.17",
       "@types/express": "^4.17.21",
       "@types/jsonwebtoken": "^9.0.5",
       "@types/morgan": "^1.9.9",
