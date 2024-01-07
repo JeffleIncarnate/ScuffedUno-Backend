@@ -2,22 +2,23 @@ import { Secret } from "jsonwebtoken";
 import { IScopes } from "../data/scopes";
 
 declare global {
-  namespace NodeJS {
-    interface ProcessEnv {
-      ACCESS_TOKEN_SECRET: Secret | string;
-      EMAIL_USER: string;
-      EMAIL_PASSWORD: string;
-    }
-  }
+   namespace NodeJS {
+      interface ProcessEnv {
+         ACCESS_TOKEN_SECRET: Secret | string;
+         EMAIL_USER: string;
+         EMAIL_PASSWORD: string;
+         REDIS_URL: string;
+      }
+   }
 
-  namespace Express {
-    export interface Request {
-      user?: {
-        uuid: string;
-        scopes: IScopes;
-      };
-    }
-  }
+   namespace Express {
+      export interface Request {
+         user?: {
+            uuid: string;
+            scopes: IScopes;
+         };
+      }
+   }
 }
 
 export {};
