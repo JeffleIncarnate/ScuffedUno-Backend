@@ -1,8 +1,12 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -10,16 +14,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @unique
-  username  String   @unique
-  email     String
-  password  String
-  createdAt DateTime @default(now())
-  banned    Boolean  @default(false)
-  verified  Boolean  @default(false)
+enum Role {
+  USER
+  ADMIN
 }
 
-model RefereshToken {
-  id String @unique
+model User {
+  id             String     @id @default(cuid())
+  displayName    String                            @map("display_name")
+  firstname      String   
+  lastname       String
+  photo          String
+  email          String     @unique
+  role           Role       @default(USER)
+  createdAt      DateTime   @default(now())        @map("created_at")
+  updatedAt      DateTime   @default(now())        @map("updated_at")
+  account        Account    @relation(fields: [accountId], references: [id])
+  accountId      String     @unique 
+
+
+  @@map("user")
+}
+
+model Account {
+  id             String     @id @default(cuid())
+  accessToken    String                            @map("access_token")
+  refreshToken   String                            @map("refresh_token")
+  scope          String
+  tokenType      String                            @map("token_type")
+  idToken        String                            @map("id_token")
+  expiryDate     BigInt                            @map("expiry_date")
+  user           User?
+  
+  @@map("account")
 }

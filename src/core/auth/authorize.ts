@@ -1,51 +1,65 @@
-import jwt, { JsonWebTokenError, JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
-import HTTPErrors from "../errors";
-import { AccessTokenValidator, AccessToken } from "../types/validators";
+import { decryptAccessToken, decryptRefreshToken } from "../utils/jwt";
+import { validateAccessToken, validateRefreshToken } from "../utils/validators";
+import { CustomError } from "../error/custom/error";
+import { JsonWebTokenError } from "jsonwebtoken";
 
-export function isAccessToken(
-   token_data: string | JwtPayload,
-): token_data is AccessToken {
-   return AccessTokenValidator.safeParse(token_data).success;
-}
+export const authorize = (req: Request, res: Response, next: NextFunction) => {
+  const cookie = req.headers.cookie;
 
-export function authorizeRequest(
-   req: Request,
-   res: Response,
-   next: NextFunction,
-) {
-   const auth_header = req.headers["authorization"];
-   const token = auth_header && auth_header.split(" ")[1]; // Splitting because it goes: "Bearer [space] TOKEN"
+  if (!cookie) {
+    res.status(401).send({
+      type: "REGULAR ERROR",
+      name: "auth",
+      details: {
+        message: "cookies were undefined",
+        code: 401,
+      },
+    });
+    return;
+  }
 
-   if (token === undefined) {
-      next(new HTTPErrors.TokenNotProvided());
-      return;
-   }
+  const [accessToken, refreshToken] = cookie
+    .split(";")
+    .map((e) => e.split("=")[1]);
 
-   let token_data;
-   try {
-      token_data = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-   } catch (err) {
-      if (!(err instanceof JsonWebTokenError)) {
-         next(new HTTPErrors.GeneralTokenFail());
-         return;
-      }
+  // verify the tokens
+  try {
+    validateAccessToken.parse(decryptAccessToken(accessToken));
+  } catch (err) {
+    // it doesn't matter what the error is cause we'll send the same error anyways
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
 
-      next(new HTTPErrors.InvalidTokenProvided(err.message));
-      return;
-   }
+    res.status(401).send({
+      type: "REGULAR ERROR",
+      name: "auth",
+      details: {
+        message: "access token error",
+        code: 401,
+      },
+    });
+    return;
+  }
 
-   if (!isAccessToken(token_data)) {
-      next(
-         new HTTPErrors.InvalidTokenProvided(
-            "The token you provided is not an access token, probably a refresh token",
-         ),
-      );
-      return;
-   }
+  try {
+    validateRefreshToken.parse(decryptRefreshToken(refreshToken));
+  } catch (err) {
+    // it doesn't matter what the error is cause we'll send the same error anyways
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
 
-   // i think this should be renamed to req.token
-   req.user = token_data;
-   next();
-}
+    res.status(401).send({
+      type: "REGULAR ERROR",
+      name: "auth",
+      details: {
+        message: "refresh token error",
+        code: 401,
+      },
+    });
+    return;
+  }
+
+  next();
+};
